@@ -32,6 +32,7 @@ public sealed class CreateTaskHandlerTests
         var handler = new CreateTaskHandler(
             new StubCurrentTenant(Guid.NewGuid()),
             repository);
+
         using var cancellationSource = new CancellationTokenSource();
 
         await handler.HandleAsync(
