@@ -1,0 +1,28 @@
+# .NET build output
+bin/
+obj/
+artifacts/
+
+# IDE and user-specific files
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Test output
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# Local configuration and secrets
+appsettings.*.local.json
+.env
+
+# Frontend dependencies and build output
+node_modules/
+dist/
+
+# Operating system files
+.DS_Store
+Thumbs.db
