@@ -8,13 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Controllers\**" />
-    <Content Remove="Controllers\**" />
-    <EmbeddedResource Remove="Controllers\**" />
-    <None Remove="Controllers\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\TenantTaskManager.Application\TenantTaskManager.Application.csproj" />
     <ProjectReference Include="..\TenantTaskManager.Infrastructure\TenantTaskManager.Infrastructure.csproj" />
   </ItemGroup>
