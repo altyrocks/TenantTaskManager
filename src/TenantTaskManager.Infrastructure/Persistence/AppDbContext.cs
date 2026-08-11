@@ -10,6 +10,8 @@ public sealed class AppDbContext(
 {
     public DbSet<Tenant> Tenants => Set<Tenant>();
 
+    public DbSet<UserAccount> Users => Set<UserAccount>();
+
     public DbSet<TaskItem> Tasks => Set<TaskItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -21,5 +23,8 @@ public sealed class AppDbContext(
 
         modelBuilder.Entity<TaskItem>()
             .HasQueryFilter(task => task.TenantId == currentTenant.TenantId);
+
+        modelBuilder.Entity<UserAccount>()
+            .HasQueryFilter(user => user.TenantId == currentTenant.TenantId);
     }
 }
