@@ -3,9 +3,9 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using TenantTaskManager.Infrastructure;
 using TenantTaskManager.Api.Authentication;
+using TenantTaskManager.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TenantTaskManager.Infrastructure.Authentication;
-using TenantTaskManager.Infrastructure.Persistence;
 using TenantTaskManager.Application.Abstractions.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);

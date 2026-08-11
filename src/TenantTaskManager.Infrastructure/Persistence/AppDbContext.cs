@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using TenantTaskManager.Application.Abstractions.Authentication;
 using TenantTaskManager.Domain.Entities;
+using TenantTaskManager.Application.Abstractions.Authentication;
 
 namespace TenantTaskManager.Infrastructure.Persistence;
 

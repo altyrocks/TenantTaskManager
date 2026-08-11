@@ -1,7 +1,7 @@
-using TenantTaskManager.Application.Abstractions.Authentication;
-using TenantTaskManager.Application.Abstractions.Persistence;
-using TenantTaskManager.Application.Tasks.CreateTask;
 using TenantTaskManager.Domain.Entities;
+using TenantTaskManager.Application.Tasks.CreateTask;
+using TenantTaskManager.Application.Abstractions.Persistence;
+using TenantTaskManager.Application.Abstractions.Authentication;
 
 namespace TenantTaskManager.Application.Tests.Tasks.CreateTask;
 
