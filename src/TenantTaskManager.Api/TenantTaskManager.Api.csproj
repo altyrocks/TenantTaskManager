@@ -10,4 +10,9 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TenantTaskManager.Application\TenantTaskManager.Application.csproj" />
+    <ProjectReference Include="..\TenantTaskManager.Infrastructure\TenantTaskManager.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
