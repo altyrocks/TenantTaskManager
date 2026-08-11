@@ -18,6 +18,7 @@ public static class DependencyInjection
 
         services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
         services.AddScoped<ITaskRepository, TaskRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddSingleton<IPasswordHasher, AspNetCorePasswordHasher>();
 
         return services;
