@@ -5,6 +5,7 @@ using TenantTaskManager.Infrastructure;
 using TenantTaskManager.Api.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TenantTaskManager.Infrastructure.Authentication;
+using TenantTaskManager.Infrastructure.Persistence;
 using TenantTaskManager.Application.Abstractions.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,6 +55,21 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddInfrastructure(connectionString);
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    var tenantName = builder.Configuration["DevelopmentSeed:TenantName"]
+        ?? throw new InvalidOperationException("The development tenant name is missing.");
+    var adminEmail = builder.Configuration["DevelopmentSeed:AdminEmail"]
+        ?? throw new InvalidOperationException("The development admin email is missing.");
+    var adminPassword = builder.Configuration["DevelopmentSeed:AdminPassword"]
+        ?? throw new InvalidOperationException("The development admin password is missing.");
+
+    await using var scope = app.Services.CreateAsyncScope();
+    var initializer = scope.ServiceProvider
+        .GetRequiredService<DevelopmentDatabaseInitializer>();
+    await initializer.InitializeAsync(tenantName, adminEmail, adminPassword);
+}
 
 app.UseHttpsRedirection();
 
