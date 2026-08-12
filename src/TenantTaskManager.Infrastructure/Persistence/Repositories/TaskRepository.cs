@@ -6,6 +6,15 @@ namespace TenantTaskManager.Infrastructure.Persistence.Repositories;
 
 public sealed class TaskRepository(AppDbContext dbContext) : ITaskRepository
 {
+    public Task<TaskItem?> GetByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        return dbContext.Tasks.SingleOrDefaultAsync(
+            task => task.Id == id,
+            cancellationToken);
+    }
+
     public async Task<IReadOnlyList<TaskItem>> GetAllAsync(
         CancellationToken cancellationToken = default)
     {
@@ -23,5 +32,10 @@ public sealed class TaskRepository(AppDbContext dbContext) : ITaskRepository
         dbContext.Tasks.Add(task);
 
         await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public Task SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        return dbContext.SaveChangesAsync(cancellationToken);
     }
 }

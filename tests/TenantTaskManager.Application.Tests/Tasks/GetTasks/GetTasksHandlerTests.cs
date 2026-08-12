@@ -15,6 +15,7 @@ public sealed class GetTasksHandlerTests
         var result = await handler.HandleAsync();
 
         var item = Assert.Single(result);
+
         Assert.Equal(task.Id, item.Id);
         Assert.Equal(task.Title, item.Title);
         Assert.Equal(task.IsCompleted, item.IsCompleted);
@@ -34,6 +35,15 @@ public sealed class GetTasksHandlerTests
 
         public Task AddAsync(
             TaskItem task,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
+
+        public Task<TaskItem?> GetByIdAsync(
+            Guid id,
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
+
+        public Task SaveChangesAsync(
             CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
     }

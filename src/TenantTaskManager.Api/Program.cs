@@ -8,6 +8,7 @@ using TenantTaskManager.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TenantTaskManager.Application.Tasks.CreateTask;
 using TenantTaskManager.Infrastructure.Authentication;
+using TenantTaskManager.Application.Tasks.CompleteTask;
 using TenantTaskManager.Application.Authentication.Login;
 using TenantTaskManager.Application.Abstractions.Authentication;
 
@@ -19,6 +20,7 @@ builder.Services.AddScoped<ICurrentTenant, CurrentTenant>();
 builder.Services.AddScoped<LoginHandler>();
 builder.Services.AddScoped<CreateTaskHandler>();
 builder.Services.AddScoped<GetTasksHandler>();
+builder.Services.AddScoped<CompleteTaskHandler>();
 
 var jwtSection = builder.Configuration.GetSection(JwtOptions.SectionName);
 var jwtOptions = jwtSection.Get<JwtOptions>()

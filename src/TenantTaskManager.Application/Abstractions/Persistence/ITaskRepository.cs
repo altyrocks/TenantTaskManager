@@ -8,4 +8,10 @@ public interface ITaskRepository
 
     Task<IReadOnlyList<TaskItem>> GetAllAsync(
         CancellationToken cancellationToken = default);
+
+    Task<TaskItem?> GetByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default);
+
+    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }
