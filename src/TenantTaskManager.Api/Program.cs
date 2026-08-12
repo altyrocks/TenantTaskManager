@@ -3,12 +3,13 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using TenantTaskManager.Infrastructure;
 using TenantTaskManager.Api.Authentication;
+using TenantTaskManager.Application.Tasks.GetTasks;
 using TenantTaskManager.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using TenantTaskManager.Infrastructure.Authentication;
-using TenantTaskManager.Application.Abstractions.Authentication;
-using TenantTaskManager.Application.Authentication.Login;
 using TenantTaskManager.Application.Tasks.CreateTask;
+using TenantTaskManager.Infrastructure.Authentication;
+using TenantTaskManager.Application.Authentication.Login;
+using TenantTaskManager.Application.Abstractions.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentTenant, CurrentTenant>();
 builder.Services.AddScoped<LoginHandler>();
 builder.Services.AddScoped<CreateTaskHandler>();
+builder.Services.AddScoped<GetTasksHandler>();
 
 var jwtSection = builder.Configuration.GetSection(JwtOptions.SectionName);
 var jwtOptions = jwtSection.Get<JwtOptions>()
