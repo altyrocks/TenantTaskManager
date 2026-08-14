@@ -13,11 +13,15 @@ public sealed class DevelopmentDatabaseInitializer(
         string tenantName,
         string adminEmail,
         string adminPassword,
+        string userEmail,
+        string userPassword,
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantName);
         ArgumentException.ThrowIfNullOrWhiteSpace(adminEmail);
         ArgumentException.ThrowIfNullOrWhiteSpace(adminPassword);
+        ArgumentException.ThrowIfNullOrWhiteSpace(userEmail);
+        ArgumentException.ThrowIfNullOrWhiteSpace(userPassword);
 
         await dbContext.Database.MigrateAsync(cancellationToken);
 
@@ -34,21 +38,42 @@ public sealed class DevelopmentDatabaseInitializer(
             await dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        var normalizedEmail = adminEmail.Trim().ToUpperInvariant();
-        var adminExists = await dbContext.Users
+        await EnsureUserAsync(
+            tenant.Id,
+            adminEmail,
+            adminPassword,
+            UserRole.Admin,
+            cancellationToken);
+        await EnsureUserAsync(
+            tenant.Id,
+            userEmail,
+            userPassword,
+            UserRole.User,
+            cancellationToken);
+    }
+
+    private async Task EnsureUserAsync(
+        Guid tenantId,
+        string email,
+        string password,
+        UserRole role,
+        CancellationToken cancellationToken)
+    {
+        var normalizedEmail = email.Trim().ToUpperInvariant();
+        var userExists = await dbContext.Users
             .IgnoreQueryFilters()
             .AnyAsync(
                 user => user.NormalizedEmail == normalizedEmail,
                 cancellationToken);
 
-        if (!adminExists)
+        if (!userExists)
         {
-            var admin = new UserAccount(
-                tenant.Id,
-                adminEmail,
-                passwordHasher.Hash(adminPassword),
-                UserRole.Admin);
-            dbContext.Users.Add(admin);
+            var user = new UserAccount(
+                tenantId,
+                email,
+                passwordHasher.Hash(password),
+                role);
+            dbContext.Users.Add(user);
             await dbContext.SaveChangesAsync(cancellationToken);
         }
     }

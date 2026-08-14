@@ -10,6 +10,32 @@ namespace TenantTaskManager.Infrastructure.Tests.Persistence.Repositories;
 public sealed class UserRepositoryTests
 {
     [Fact]
+    public async Task GetAllForCurrentTenantAsync_ReturnsOnlyCurrentTenantUsers()
+    {
+        var currentTenantId = Guid.NewGuid();
+        var currentUser = new UserAccount(
+            currentTenantId,
+            "current@example.com",
+            "password-hash",
+            UserRole.Admin);
+        var otherUser = new UserAccount(
+            Guid.NewGuid(),
+            "other@example.com",
+            "password-hash",
+            UserRole.User);
+        await using var dbContext = CreateDbContext(currentTenantId);
+        dbContext.Users.AddRange(currentUser, otherUser);
+        await dbContext.SaveChangesAsync();
+        var repository = new UserRepository(dbContext);
+
+        var result = await repository.GetAllForCurrentTenantAsync();
+
+        var user = Assert.Single(result);
+        Assert.Equal(currentUser.Id, user.Id);
+        Assert.Equal(currentTenantId, user.TenantId);
+    }
+
+    [Fact]
     public async Task GetByNormalizedEmailAsync_FindsUserOutsideCurrentTenant()
     {
         var currentTenantId = Guid.NewGuid();

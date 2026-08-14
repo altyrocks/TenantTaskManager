@@ -84,6 +84,10 @@ public sealed class LoginHandlerTests
             NormalizedEmail = normalizedEmail;
             return Task.FromResult(user);
         }
+
+        public Task<IReadOnlyList<UserAccount>> GetAllForCurrentTenantAsync(
+            CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
     }
 
     private sealed class StubPasswordHasher(bool isValid) : IPasswordHasher

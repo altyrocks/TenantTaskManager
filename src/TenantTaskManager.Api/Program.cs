@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using TenantTaskManager.Infrastructure;
 using TenantTaskManager.Api.Authentication;
+using TenantTaskManager.Application.Users.GetUsers;
 using TenantTaskManager.Application.Tasks.GetTasks;
 using TenantTaskManager.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -23,6 +24,7 @@ builder.Services.AddScoped<CreateTaskHandler>();
 builder.Services.AddScoped<GetTasksHandler>();
 builder.Services.AddScoped<CompleteTaskHandler>();
 builder.Services.AddScoped<UpdateTaskHandler>();
+builder.Services.AddScoped<GetUsersHandler>();
 
 var jwtSection = builder.Configuration.GetSection(JwtOptions.SectionName);
 var jwtOptions = jwtSection.Get<JwtOptions>()
@@ -74,11 +76,20 @@ if (app.Environment.IsDevelopment())
         ?? throw new InvalidOperationException("The development admin email is missing.");
     var adminPassword = builder.Configuration["DevelopmentSeed:AdminPassword"]
         ?? throw new InvalidOperationException("The development admin password is missing.");
+    var userEmail = builder.Configuration["DevelopmentSeed:UserEmail"]
+        ?? throw new InvalidOperationException("The development user email is missing.");
+    var userPassword = builder.Configuration["DevelopmentSeed:UserPassword"]
+        ?? throw new InvalidOperationException("The development user password is missing.");
 
     await using var scope = app.Services.CreateAsyncScope();
     var initializer = scope.ServiceProvider
         .GetRequiredService<DevelopmentDatabaseInitializer>();
-    await initializer.InitializeAsync(tenantName, adminEmail, adminPassword);
+    await initializer.InitializeAsync(
+        tenantName,
+        adminEmail,
+        adminPassword,
+        userEmail,
+        userPassword);
 }
 
 app.UseHttpsRedirection();
