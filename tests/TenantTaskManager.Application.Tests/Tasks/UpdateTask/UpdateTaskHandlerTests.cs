@@ -1,23 +1,22 @@
 using TenantTaskManager.Domain.Entities;
 using TenantTaskManager.Application.Tasks;
-using TenantTaskManager.Application.Tasks.CompleteTask;
+using TenantTaskManager.Application.Tasks.UpdateTask;
 using TenantTaskManager.Application.Abstractions.Persistence;
 
-namespace TenantTaskManager.Application.Tests.Tasks.CompleteTask;
+namespace TenantTaskManager.Application.Tests.Tasks.UpdateTask;
 
-public sealed class CompleteTaskHandlerTests
+public sealed class UpdateTaskHandlerTests
 {
     [Fact]
-    public async Task HandleAsync_WithExistingTask_CompletesAndSavesTask()
+    public async Task HandleAsync_WithExistingTask_UpdatesAndSavesTask()
     {
-        var task = new TaskItem(Guid.NewGuid(), "Prepare report");
+        var task = new TaskItem(Guid.NewGuid(), "Original title");
         var repository = new StubTaskRepository(task);
-        var handler = new CompleteTaskHandler(repository);
+        var handler = new UpdateTaskHandler(repository);
 
-        await handler.HandleAsync(task.Id);
+        await handler.HandleAsync(new UpdateTaskCommand(task.Id, "Updated title"));
 
-        Assert.True(task.IsCompleted);
-        Assert.NotNull(task.CompletedAtUtc);
+        Assert.Equal("Updated title", task.Title);
         Assert.True(repository.SaveChangesCalled);
     }
 
@@ -25,10 +24,11 @@ public sealed class CompleteTaskHandlerTests
     public async Task HandleAsync_WithUnknownTask_ThrowsTaskNotFoundException()
     {
         var repository = new StubTaskRepository(null);
-        var handler = new CompleteTaskHandler(repository);
+        var handler = new UpdateTaskHandler(repository);
 
         await Assert.ThrowsAsync<TaskNotFoundException>(() =>
-            handler.HandleAsync(Guid.NewGuid()));
+            handler.HandleAsync(
+                new UpdateTaskCommand(Guid.NewGuid(), "Updated title")));
 
         Assert.False(repository.SaveChangesCalled);
     }

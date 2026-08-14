@@ -76,4 +76,28 @@ public sealed class TaskItemTests
 
         Assert.Equal(originalCompletionTime, task.CompletedAtUtc);
     }
+
+    [Fact]
+    public void UpdateTitle_WithValidTitle_UpdatesAndTrimsTitle()
+    {
+        var task = new TaskItem(Guid.NewGuid(), "Original title");
+
+        task.UpdateTitle("  Updated title  ");
+
+        Assert.Equal("Updated title", task.Title);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void UpdateTitle_WithBlankTitle_ThrowsArgumentException(string title)
+    {
+        var task = new TaskItem(Guid.NewGuid(), "Original title");
+
+        var exception = Assert.Throws<ArgumentException>(
+            () => task.UpdateTitle(title));
+
+        Assert.Equal("title", exception.ParamName);
+        Assert.Equal("Original title", task.Title);
+    }
 }

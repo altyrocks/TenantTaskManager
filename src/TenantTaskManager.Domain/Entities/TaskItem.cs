@@ -46,4 +46,14 @@ public sealed class TaskItem
         IsCompleted = true;
         CompletedAtUtc = DateTimeOffset.UtcNow;
     }
+
+    public void UpdateTitle(string title)
+    {
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            throw new ArgumentException("A task title is required.", nameof(title));
+        }
+
+        Title = title.Trim();
+    }
 }

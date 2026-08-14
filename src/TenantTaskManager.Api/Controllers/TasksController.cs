@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using TenantTaskManager.Application.Tasks;
 using TenantTaskManager.Api.Contracts.Tasks;
 using TenantTaskManager.Application.Tasks.GetTasks;
 using TenantTaskManager.Application.Tasks.CreateTask;
+using TenantTaskManager.Application.Tasks.UpdateTask;
 using TenantTaskManager.Application.Tasks.CompleteTask;
 
 namespace TenantTaskManager.Api.Controllers;
@@ -13,8 +15,31 @@ namespace TenantTaskManager.Api.Controllers;
 public sealed class TasksController(
     CreateTaskHandler createTaskHandler,
     GetTasksHandler getTasksHandler,
-    CompleteTaskHandler completeTaskHandler) : ControllerBase
+    CompleteTaskHandler completeTaskHandler,
+    UpdateTaskHandler updateTaskHandler) : ControllerBase
 {
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Update(
+        Guid id,
+        UpdateTaskRequest request,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            await updateTaskHandler.HandleAsync(
+                new UpdateTaskCommand(id, request.Title),
+                cancellationToken);
+            return NoContent();
+        }
+        catch (TaskNotFoundException exception)
+        {
+            return TaskNotFound(exception);
+        }
+    }
+
     [HttpPatch("{id:guid}/complete")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
@@ -31,12 +56,7 @@ public sealed class TasksController(
         }
         catch (TaskNotFoundException exception)
         {
-            return NotFound(new ProblemDetails
-            {
-                Status = StatusCodes.Status404NotFound,
-                Title = "Task not found",
-                Detail = exception.Message
-            });
+            return TaskNotFound(exception);
         }
     }
 
@@ -65,5 +85,15 @@ public sealed class TasksController(
         return StatusCode(
             StatusCodes.Status201Created,
             new CreateTaskResponse(taskId));
+    }
+
+    private NotFoundObjectResult TaskNotFound(TaskNotFoundException exception)
+    {
+        return NotFound(new ProblemDetails
+        {
+            Status = StatusCodes.Status404NotFound,
+            Title = "Task not found",
+            Detail = exception.Message
+        });
     }
 }

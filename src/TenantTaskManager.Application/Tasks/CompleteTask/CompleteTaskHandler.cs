@@ -1,3 +1,4 @@
+using TenantTaskManager.Application.Tasks;
 using TenantTaskManager.Application.Abstractions.Persistence;
 
 namespace TenantTaskManager.Application.Tasks.CompleteTask;
