@@ -15,6 +15,9 @@ public sealed class DevelopmentDatabaseInitializer(
         string adminPassword,
         string userEmail,
         string userPassword,
+        string secondTenantName,
+        string secondUserEmail,
+        string secondUserPassword,
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(tenantName);
@@ -22,9 +25,41 @@ public sealed class DevelopmentDatabaseInitializer(
         ArgumentException.ThrowIfNullOrWhiteSpace(adminPassword);
         ArgumentException.ThrowIfNullOrWhiteSpace(userEmail);
         ArgumentException.ThrowIfNullOrWhiteSpace(userPassword);
+        ArgumentException.ThrowIfNullOrWhiteSpace(secondTenantName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(secondUserEmail);
+        ArgumentException.ThrowIfNullOrWhiteSpace(secondUserPassword);
 
         await dbContext.Database.MigrateAsync(cancellationToken);
 
+        var tenant = await EnsureTenantAsync(tenantName, cancellationToken);
+        await EnsureUserAsync(
+            tenant.Id,
+            adminEmail,
+            adminPassword,
+            UserRole.Admin,
+            cancellationToken);
+        await EnsureUserAsync(
+            tenant.Id,
+            userEmail,
+            userPassword,
+            UserRole.User,
+            cancellationToken);
+
+        var secondTenant = await EnsureTenantAsync(
+            secondTenantName,
+            cancellationToken);
+        await EnsureUserAsync(
+            secondTenant.Id,
+            secondUserEmail,
+            secondUserPassword,
+            UserRole.User,
+            cancellationToken);
+    }
+
+    private async Task<Tenant> EnsureTenantAsync(
+        string tenantName,
+        CancellationToken cancellationToken)
+    {
         var tenant = await dbContext.Tenants
             .IgnoreQueryFilters()
             .SingleOrDefaultAsync(
@@ -38,18 +73,7 @@ public sealed class DevelopmentDatabaseInitializer(
             await dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        await EnsureUserAsync(
-            tenant.Id,
-            adminEmail,
-            adminPassword,
-            UserRole.Admin,
-            cancellationToken);
-        await EnsureUserAsync(
-            tenant.Id,
-            userEmail,
-            userPassword,
-            UserRole.User,
-            cancellationToken);
+        return tenant;
     }
 
     private async Task EnsureUserAsync(

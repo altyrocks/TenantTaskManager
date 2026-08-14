@@ -8,9 +8,9 @@ using TenantTaskManager.Application.Tasks.GetTasks;
 using TenantTaskManager.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using TenantTaskManager.Application.Tasks.CreateTask;
+using TenantTaskManager.Application.Tasks.UpdateTask;
 using TenantTaskManager.Infrastructure.Authentication;
 using TenantTaskManager.Application.Tasks.CompleteTask;
-using TenantTaskManager.Application.Tasks.UpdateTask;
 using TenantTaskManager.Application.Authentication.Login;
 using TenantTaskManager.Application.Abstractions.Authentication;
 
@@ -80,6 +80,12 @@ if (app.Environment.IsDevelopment())
         ?? throw new InvalidOperationException("The development user email is missing.");
     var userPassword = builder.Configuration["DevelopmentSeed:UserPassword"]
         ?? throw new InvalidOperationException("The development user password is missing.");
+    var secondTenantName = builder.Configuration["DevelopmentSeed:SecondTenantName"]
+        ?? throw new InvalidOperationException("The second development tenant name is missing.");
+    var secondUserEmail = builder.Configuration["DevelopmentSeed:SecondUserEmail"]
+        ?? throw new InvalidOperationException("The second development user email is missing.");
+    var secondUserPassword = builder.Configuration["DevelopmentSeed:SecondUserPassword"]
+        ?? throw new InvalidOperationException("The second development user password is missing.");
 
     await using var scope = app.Services.CreateAsyncScope();
     var initializer = scope.ServiceProvider
@@ -89,11 +95,18 @@ if (app.Environment.IsDevelopment())
         adminEmail,
         adminPassword,
         userEmail,
-        userPassword);
+        userPassword,
+        secondTenantName,
+        secondUserEmail,
+        secondUserPassword);
 }
 
 app.UseHttpsRedirection();
+
 app.UseAuthentication();
+
 app.UseAuthorization();
+
 app.MapControllers();
+
 app.Run();
