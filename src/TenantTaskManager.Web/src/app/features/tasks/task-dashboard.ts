@@ -19,9 +19,12 @@ export class TaskDashboard implements OnInit {
   errorMessage = '';
   createErrorMessage = '';
   taskActionErrorMessage = '';
+  editingTaskId: string | null = null;
+  isSavingEdit = false;
   readonly completingTaskIds = new Set<string>();
 
   readonly createForm;
+  readonly editForm;
 
   constructor(
     formBuilder: FormBuilder,
@@ -30,6 +33,9 @@ export class TaskDashboard implements OnInit {
     private readonly router: Router
   ) {
     this.createForm = formBuilder.nonNullable.group({
+      title: ['', [Validators.required, Validators.maxLength(200), Validators.pattern(/\S/)]]
+    });
+    this.editForm = formBuilder.nonNullable.group({
       title: ['', [Validators.required, Validators.maxLength(200), Validators.pattern(/\S/)]]
     });
   }
@@ -78,6 +84,46 @@ export class TaskDashboard implements OnInit {
       error: () => {
         this.completingTaskIds.delete(task.id);
         this.taskActionErrorMessage = `Unable to complete "${task.title}".`;
+      }
+    });
+  }
+
+  startEdit(task: TaskItem): void {
+    this.editingTaskId = task.id;
+    this.taskActionErrorMessage = '';
+    this.editForm.reset({ title: task.title });
+  }
+
+  cancelEdit(): void {
+    if (this.isSavingEdit) {
+      return;
+    }
+
+    this.editingTaskId = null;
+    this.editForm.reset();
+  }
+
+  saveEdit(task: TaskItem): void {
+    const title = this.editForm.controls.title.value.trim();
+
+    if (!title || this.editForm.invalid || this.isSavingEdit) {
+      this.editForm.markAllAsTouched();
+      return;
+    }
+
+    this.isSavingEdit = true;
+    this.taskActionErrorMessage = '';
+
+    this.taskService.updateTask(task.id, title).subscribe({
+      next: () => {
+        this.isSavingEdit = false;
+        this.editingTaskId = null;
+        this.editForm.reset();
+        this.loadTasks();
+      },
+      error: () => {
+        this.isSavingEdit = false;
+        this.taskActionErrorMessage = `Unable to update "${task.title}".`;
       }
     });
   }

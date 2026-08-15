@@ -93,6 +93,42 @@ button {
   font-size: 1rem;
 }
 
+.task-details {
+  min-width: 0;
+}
+
+.edit-task {
+  display: grid;
+  flex: 1;
+  gap: 0.4rem;
+  margin-right: 1rem;
+}
+
+.edit-task label {
+  font-weight: 600;
+}
+
+.edit-task input {
+  border: 1px solid #aab2c0;
+  border-radius: 0.35rem;
+  font: inherit;
+  padding: 0.6rem;
+}
+
+.edit-task .validation-error {
+  margin: 0;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-actions button:first-child {
+  background: #2457c5;
+  color: white;
+}
+
 .task-actions {
   align-items: center;
   display: flex;
@@ -157,5 +193,10 @@ button {
   .task-actions {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .edit-task {
+    margin-right: 0;
+    width: 100%;
   }
 }

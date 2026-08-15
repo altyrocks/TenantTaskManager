@@ -42,13 +42,36 @@
     <ul class="task-list">
       @for (task of tasks; track task.id) {
         <li [class.completed]="task.isCompleted">
-          <div>
-            <h2>{{ task.title }}</h2>
-            <p>Created {{ task.createdAtUtc | date:'medium' }}</p>
-          </div>
+          @if (editingTaskId === task.id) {
+            <form class="edit-task" [formGroup]="editForm" (ngSubmit)="saveEdit(task)">
+              <label [for]="'edit-title-' + task.id">Task title</label>
+              <input
+                [id]="'edit-title-' + task.id"
+                type="text"
+                formControlName="title"
+                maxlength="200">
+              @if (editForm.controls.title.touched && editForm.controls.title.invalid) {
+                <p class="validation-error">Enter a task title of 200 characters or fewer.</p>
+              }
+              <div class="edit-actions">
+                <button type="submit" [disabled]="isSavingEdit">
+                  {{ isSavingEdit ? 'Saving...' : 'Save' }}
+                </button>
+                <button type="button" (click)="cancelEdit()" [disabled]="isSavingEdit">Cancel</button>
+              </div>
+            </form>
+          } @else {
+            <div class="task-details">
+              <h2>{{ task.title }}</h2>
+              <p>Created {{ task.createdAtUtc | date:'medium' }}</p>
+            </div>
+          }
           <div class="task-actions">
             <span>{{ task.isCompleted ? 'Complete' : 'Open' }}</span>
-            @if (!task.isCompleted) {
+            @if (editingTaskId !== task.id) {
+              <button type="button" (click)="startEdit(task)" [disabled]="isSavingEdit">Edit</button>
+            }
+            @if (!task.isCompleted && editingTaskId !== task.id) {
               <button
                 type="button"
                 (click)="completeTask(task)"

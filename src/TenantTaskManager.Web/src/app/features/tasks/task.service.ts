@@ -28,4 +28,8 @@ export class TaskService {
   completeTask(id: string) {
     return this.http.patch<void>(`/api/tasks/${id}/complete`, null);
   }
+
+  updateTask(id: string, title: string) {
+    return this.http.put<void>(`/api/tasks/${id}`, { title });
+  }
 }
