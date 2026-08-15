@@ -53,8 +53,5 @@ public sealed class UpdateTaskHandlerTests
             CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
 
-        public Task<IReadOnlyList<TaskItem>> GetAllAsync(
-            CancellationToken cancellationToken = default) =>
-            throw new NotSupportedException();
     }
 }

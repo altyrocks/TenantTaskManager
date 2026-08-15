@@ -1,4 +1,3 @@
-using TenantTaskManager.Domain.Entities;
 using TenantTaskManager.Application.Tasks.GetTasks;
 using TenantTaskManager.Application.Abstractions.Persistence;
 
@@ -7,10 +6,15 @@ namespace TenantTaskManager.Application.Tests.Tasks.GetTasks;
 public sealed class GetTasksHandlerTests
 {
     [Fact]
-    public async Task HandleAsync_MapsTasksWithoutExposingTenantId()
+    public async Task HandleAsync_ReturnsQueryResultsWithoutExposingTenantId()
     {
-        var task = new TaskItem(Guid.NewGuid(), "Prepare report");
-        var handler = new GetTasksHandler(new StubTaskRepository([task]));
+        var task = new TaskDto(
+            Guid.NewGuid(),
+            "Prepare report",
+            false,
+            DateTimeOffset.UtcNow,
+            null);
+        var handler = new GetTasksHandler(new StubTaskQuery([task]));
 
         var result = await handler.HandleAsync();
 
@@ -26,25 +30,11 @@ public sealed class GetTasksHandlerTests
             property => property.Name == "TenantId");
     }
 
-    private sealed class StubTaskRepository(
-        IReadOnlyList<TaskItem> tasks) : ITaskRepository
+    private sealed class StubTaskQuery(
+        IReadOnlyList<TaskDto> tasks) : ITaskQuery
     {
-        public Task<IReadOnlyList<TaskItem>> GetAllAsync(
+        public Task<IReadOnlyList<TaskDto>> GetAllAsync(
             CancellationToken cancellationToken = default) =>
             Task.FromResult(tasks);
-
-        public Task AddAsync(
-            TaskItem task,
-            CancellationToken cancellationToken = default) =>
-            throw new NotSupportedException();
-
-        public Task<TaskItem?> GetByIdAsync(
-            Guid id,
-            CancellationToken cancellationToken = default) =>
-            throw new NotSupportedException();
-
-        public Task SaveChangesAsync(
-            CancellationToken cancellationToken = default) =>
-            throw new NotSupportedException();
     }
 }

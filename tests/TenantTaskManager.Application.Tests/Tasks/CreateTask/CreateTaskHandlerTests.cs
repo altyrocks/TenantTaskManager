@@ -67,10 +67,6 @@ public sealed class CreateTaskHandlerTests
 
         public CancellationToken CancellationToken { get; private set; }
 
-        public Task<IReadOnlyList<TaskItem>> GetAllAsync(
-            CancellationToken cancellationToken = default) =>
-            throw new NotSupportedException();
-
         public Task<TaskItem?> GetByIdAsync(
             Guid id,
             CancellationToken cancellationToken = default) =>

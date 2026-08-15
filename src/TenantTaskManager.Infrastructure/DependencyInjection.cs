@@ -5,6 +5,7 @@ using TenantTaskManager.Infrastructure.Authentication;
 using TenantTaskManager.Application.Abstractions.Persistence;
 using TenantTaskManager.Application.Abstractions.Authentication;
 using TenantTaskManager.Infrastructure.Persistence.Repositories;
+using TenantTaskManager.Infrastructure.Persistence.Queries;
 
 namespace TenantTaskManager.Infrastructure;
 
@@ -18,6 +19,7 @@ public static class DependencyInjection
 
         services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
         services.AddScoped<ITaskRepository, TaskRepository>();
+        services.AddScoped<ITaskQuery, TaskQuery>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<DevelopmentDatabaseInitializer>();
         services.AddSingleton<IPasswordHasher, AspNetCorePasswordHasher>();
