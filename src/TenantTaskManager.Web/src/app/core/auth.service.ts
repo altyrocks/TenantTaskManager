@@ -18,4 +18,16 @@ export class AuthService {
       .post<LoginResponse>('/api/auth/login', { email, password })
       .pipe(tap(response => sessionStorage.setItem(this.tokenKey, response.accessToken)));
   }
+
+  getAccessToken(): string | null {
+    return sessionStorage.getItem(this.tokenKey);
+  }
+
+  isAuthenticated(): boolean {
+    return this.getAccessToken() !== null;
+  }
+
+  logout(): void {
+    sessionStorage.removeItem(this.tokenKey);
+  }
 }

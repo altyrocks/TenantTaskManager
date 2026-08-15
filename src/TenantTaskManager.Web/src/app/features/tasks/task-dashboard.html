@@ -1,0 +1,29 @@
+<header class="page-header">
+  <div>
+    <h1>Tasks</h1>
+    <p>Your tenant's task list</p>
+  </div>
+  <button type="button" (click)="logout()">Sign out</button>
+</header>
+
+<main>
+  @if (isLoading) {
+    <p>Loading tasks...</p>
+  } @else if (errorMessage) {
+    <p class="error" role="alert">{{ errorMessage }}</p>
+  } @else if (tasks.length === 0) {
+    <p class="empty">There are no tasks yet.</p>
+  } @else {
+    <ul class="task-list">
+      @for (task of tasks; track task.id) {
+        <li [class.completed]="task.isCompleted">
+          <div>
+            <h2>{{ task.title }}</h2>
+            <p>Created {{ task.createdAtUtc | date:'medium' }}</p>
+          </div>
+          <span>{{ task.isCompleted ? 'Complete' : 'Open' }}</span>
+        </li>
+      }
+    </ul>
+  }
+</main>

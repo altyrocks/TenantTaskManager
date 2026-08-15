@@ -1,6 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
 
 @Component({
@@ -12,13 +13,12 @@ import { AuthService } from '../../core/auth.service';
 export class Login {
   isSubmitting = false;
   errorMessage = '';
-  isSignedIn = false;
-
   readonly form;
 
   constructor(
     formBuilder: FormBuilder,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly router: Router
   ) {
     this.form = formBuilder.nonNullable.group({
       email: ['', [Validators.required, Validators.email]],
@@ -39,7 +39,7 @@ export class Login {
     this.authService.login(email, password).subscribe({
       next: () => {
         this.isSubmitting = false;
-        this.isSignedIn = true;
+        void this.router.navigate(['/tasks']);
       },
       error: (error: HttpErrorResponse) => {
         this.isSubmitting = false;
