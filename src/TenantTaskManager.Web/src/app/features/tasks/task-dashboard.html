@@ -28,6 +28,9 @@
   @if (createErrorMessage) {
     <p class="error" role="alert">{{ createErrorMessage }}</p>
   }
+  @if (taskActionErrorMessage) {
+    <p class="error action-error" role="alert">{{ taskActionErrorMessage }}</p>
+  }
 
   @if (isLoading) {
     <p>Loading tasks...</p>
@@ -43,7 +46,17 @@
             <h2>{{ task.title }}</h2>
             <p>Created {{ task.createdAtUtc | date:'medium' }}</p>
           </div>
-          <span>{{ task.isCompleted ? 'Complete' : 'Open' }}</span>
+          <div class="task-actions">
+            <span>{{ task.isCompleted ? 'Complete' : 'Open' }}</span>
+            @if (!task.isCompleted) {
+              <button
+                type="button"
+                (click)="completeTask(task)"
+                [disabled]="completingTaskIds.has(task.id)">
+                {{ completingTaskIds.has(task.id) ? 'Completing...' : 'Mark complete' }}
+              </button>
+            }
+          </div>
         </li>
       }
     </ul>

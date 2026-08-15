@@ -18,6 +18,8 @@ export class TaskDashboard implements OnInit {
   isCreating = false;
   errorMessage = '';
   createErrorMessage = '';
+  taskActionErrorMessage = '';
+  readonly completingTaskIds = new Set<string>();
 
   readonly createForm;
 
@@ -56,6 +58,26 @@ export class TaskDashboard implements OnInit {
       error: () => {
         this.isCreating = false;
         this.createErrorMessage = 'Unable to create the task.';
+      }
+    });
+  }
+
+  completeTask(task: TaskItem): void {
+    if (task.isCompleted || this.completingTaskIds.has(task.id)) {
+      return;
+    }
+
+    this.completingTaskIds.add(task.id);
+    this.taskActionErrorMessage = '';
+
+    this.taskService.completeTask(task.id).subscribe({
+      next: () => {
+        this.completingTaskIds.delete(task.id);
+        this.loadTasks();
+      },
+      error: () => {
+        this.completingTaskIds.delete(task.id);
+        this.taskActionErrorMessage = `Unable to complete "${task.title}".`;
       }
     });
   }

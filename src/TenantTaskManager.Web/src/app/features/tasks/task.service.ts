@@ -24,4 +24,8 @@ export class TaskService {
   createTask(title: string) {
     return this.http.post<CreateTaskResponse>('/api/tasks', { title });
   }
+
+  completeTask(id: string) {
+    return this.http.patch<void>(`/api/tasks/${id}/complete`, null);
+  }
 }
