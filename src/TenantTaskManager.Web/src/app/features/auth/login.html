@@ -1,0 +1,32 @@
+<main class="login-page">
+  <section class="login-card" aria-labelledby="login-title">
+    <h1 id="login-title">Tenant Task Manager</h1>
+    <p class="subtitle">Sign in to view your tenant's tasks.</p>
+
+    @if (isSignedIn) {
+      <p class="success" role="status">You are signed in.</p>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <label for="email">Email</label>
+        <input id="email" type="email" formControlName="email" autocomplete="username">
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <p class="field-error">Enter a valid email address.</p>
+        }
+
+        <label for="password">Password</label>
+        <input id="password" type="password" formControlName="password" autocomplete="current-password">
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <p class="field-error">Password is required.</p>
+        }
+
+        @if (errorMessage) {
+          <p class="form-error" role="alert">{{ errorMessage }}</p>
+        }
+
+        <button type="submit" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Signing in...' : 'Sign in' }}
+        </button>
+      </form>
+    }
+  </section>
+</main>
