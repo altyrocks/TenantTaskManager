@@ -34,6 +34,43 @@ button {
   padding: 0.6rem 1rem;
 }
 
+.create-task {
+  align-items: end;
+  background: white;
+  border-radius: 0.5rem;
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+}
+
+.create-task div {
+  display: grid;
+  flex: 1;
+  gap: 0.4rem;
+}
+
+.create-task label {
+  font-weight: 600;
+}
+
+.create-task input {
+  border: 1px solid #aab2c0;
+  border-radius: 0.35rem;
+  font: inherit;
+  padding: 0.65rem;
+}
+
+.create-task button {
+  background: #2457c5;
+  color: white;
+}
+
+.create-task button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
 .task-list {
   display: grid;
   gap: 0.75rem;
@@ -72,8 +109,14 @@ button {
   text-decoration: line-through;
 }
 
-.error {
+.error,
+.validation-error {
   color: #a51d2d;
+}
+
+.validation-error {
+  font-size: 0.875rem;
+  margin: -0.5rem 1rem 1rem;
 }
 
 .empty {
@@ -84,6 +127,11 @@ button {
 }
 
 @media (max-width: 36rem) {
+  .create-task {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
   .task-list li {
     align-items: flex-start;
     flex-direction: column;

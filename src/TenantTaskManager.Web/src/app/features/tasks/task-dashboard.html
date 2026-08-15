@@ -7,6 +7,28 @@
 </header>
 
 <main>
+  <form class="create-task" [formGroup]="createForm" (ngSubmit)="createTask()">
+    <div>
+      <label for="task-title">New task</label>
+      <input
+        id="task-title"
+        type="text"
+        formControlName="title"
+        maxlength="200"
+        placeholder="Enter a task title">
+    </div>
+    <button type="submit" [disabled]="isCreating">
+      {{ isCreating ? 'Adding...' : 'Add task' }}
+    </button>
+  </form>
+
+  @if (createForm.controls.title.touched && createForm.controls.title.invalid) {
+    <p class="validation-error">Enter a task title of 200 characters or fewer.</p>
+  }
+  @if (createErrorMessage) {
+    <p class="error" role="alert">{{ createErrorMessage }}</p>
+  }
+
   @if (isLoading) {
     <p>Loading tasks...</p>
   } @else if (errorMessage) {

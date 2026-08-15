@@ -9,11 +9,19 @@ export interface TaskItem {
   completedAtUtc: string | null;
 }
 
+interface CreateTaskResponse {
+  id: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class TaskService {
   constructor(private readonly http: HttpClient) {}
 
   getTasks() {
     return this.http.get<TaskItem[]>('/api/tasks');
+  }
+
+  createTask(title: string) {
+    return this.http.post<CreateTaskResponse>('/api/tasks', { title });
   }
 }
