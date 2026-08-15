@@ -5,7 +5,7 @@
         Width="800"
         Height="500"
         MinWidth="480"
-        MinHeight="320"
+        MinHeight="420"
         WindowStartupLocation="CenterScreen">
     <Grid Background="#F5F7FA">
         <Border Width="420"
@@ -20,11 +20,47 @@
                            FontWeight="SemiBold"
                            Foreground="#172033"
                            TextAlignment="Center" />
-                <TextBlock Margin="0,12,0,0"
-                           Text="WPF desktop companion is running."
+                <TextBlock Margin="0,8,0,24"
+                           Text="Sign in to view your tenant's tasks."
                            FontSize="15"
                            Foreground="#5B6475"
                            TextAlignment="Center" />
+
+                <TextBlock Text="Email"
+                           FontWeight="SemiBold"
+                           Foreground="#172033" />
+                <TextBox x:Name="EmailTextBox"
+                         Margin="0,6,0,16"
+                         Padding="10,8"
+                         FontSize="14"
+                         Text="user@tenanttask.local" />
+
+                <TextBlock Text="Password"
+                           FontWeight="SemiBold"
+                           Foreground="#172033" />
+                <PasswordBox x:Name="PasswordInput"
+                             Margin="0,6,0,8"
+                             Padding="10,8"
+                             FontSize="14" />
+
+                <TextBlock x:Name="MessageTextBlock"
+                           Margin="0,4,0,0"
+                           Foreground="#A51D2D"
+                           TextWrapping="Wrap"
+                           Visibility="Collapsed"
+                           AutomationProperties.LiveSetting="Assertive" />
+
+                <Button x:Name="LoginButton"
+                        Margin="0,20,0,0"
+                        Padding="12,9"
+                        Background="#2457C5"
+                        Foreground="White"
+                        BorderThickness="0"
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Content="Sign in"
+                        IsDefault="True"
+                        Click="LoginButton_Click" />
             </StackPanel>
         </Border>
     </Grid>
