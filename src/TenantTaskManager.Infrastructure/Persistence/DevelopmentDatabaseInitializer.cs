@@ -29,7 +29,14 @@ public sealed class DevelopmentDatabaseInitializer(
         ArgumentException.ThrowIfNullOrWhiteSpace(secondUserEmail);
         ArgumentException.ThrowIfNullOrWhiteSpace(secondUserPassword);
 
-        await dbContext.Database.MigrateAsync(cancellationToken);
+        if (dbContext.Database.IsRelational())
+        {
+            await dbContext.Database.MigrateAsync(cancellationToken);
+        }
+        else
+        {
+            await dbContext.Database.EnsureCreatedAsync(cancellationToken);
+        }
 
         var tenant = await EnsureTenantAsync(tenantName, cancellationToken);
         await EnsureUserAsync(

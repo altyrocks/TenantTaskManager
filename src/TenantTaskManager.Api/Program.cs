@@ -2,6 +2,7 @@ using System.Text;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using TenantTaskManager.Infrastructure;
+using TenantTaskManager.Api.ErrorHandling;
 using TenantTaskManager.Api.Authentication;
 using TenantTaskManager.Application.Users.GetUsers;
 using TenantTaskManager.Application.Tasks.GetTasks;
@@ -13,7 +14,6 @@ using TenantTaskManager.Infrastructure.Authentication;
 using TenantTaskManager.Application.Tasks.CompleteTask;
 using TenantTaskManager.Application.Authentication.Login;
 using TenantTaskManager.Application.Abstractions.Authentication;
-using TenantTaskManager.Api.ErrorHandling;
 
 var builder = WebApplication.CreateBuilder(args);
 
