@@ -1,5 +1,6 @@
 using System.Text;
 using System.Security.Claims;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using TenantTaskManager.Infrastructure;
 using TenantTaskManager.Api.ErrorHandling;
@@ -29,23 +30,26 @@ builder.Services.AddScoped<UpdateTaskHandler>();
 builder.Services.AddScoped<GetUsersHandler>();
 
 var jwtSection = builder.Configuration.GetSection(JwtOptions.SectionName);
-var jwtOptions = jwtSection.Get<JwtOptions>()
-    ?? throw new InvalidOperationException("The JWT configuration is missing.");
-
-if (string.IsNullOrWhiteSpace(jwtOptions.Issuer)
-    || string.IsNullOrWhiteSpace(jwtOptions.Audience)
-    || Encoding.UTF8.GetByteCount(jwtOptions.Secret) < 32)
-{
-    throw new InvalidOperationException("The JWT configuration is invalid.");
-}
-
-builder.Services.Configure<JwtOptions>(jwtSection);
+builder.Services
+    .AddOptions<JwtOptions>()
+    .Bind(jwtSection)
+    .Validate(options =>
+        !string.IsNullOrWhiteSpace(options.Issuer)
+        && !string.IsNullOrWhiteSpace(options.Audience)
+        && Encoding.UTF8.GetByteCount(options.Secret) >= 32
+        && options.ExpirationMinutes > 0,
+        "The JWT configuration is invalid.")
+    .ValidateOnStart();
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<IAccessTokenGenerator, JwtAccessTokenGenerator>();
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+    .AddJwtBearer();
+builder.Services
+    .AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+    .Configure<IOptions<JwtOptions>>((options, jwtOptionsAccessor) =>
     {
+        var jwtOptions = jwtOptionsAccessor.Value;
         options.MapInboundClaims = false;
         options.TokenValidationParameters = new TokenValidationParameters
         {
