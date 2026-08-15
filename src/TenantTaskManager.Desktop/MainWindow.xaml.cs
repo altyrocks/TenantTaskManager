@@ -38,12 +38,15 @@ public partial class MainWindow : Window
                 return;
             }
 
-            ShowMessage("You are signed in.", isError: false);
+            var tasks = await apiClient.GetTasksAsync();
+            TaskList.ItemsSource = tasks;
+            EmptyTasksMessage.Visibility = tasks.Count == 0
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
             signedIn = true;
-            EmailTextBox.IsEnabled = false;
-            PasswordInput.IsEnabled = false;
-            LoginButton.IsEnabled = false;
-            LoginButton.Content = "Signed in";
+            LoginPanel.Visibility = Visibility.Collapsed;
+            TaskPanel.Visibility = Visibility.Visible;
         }
         catch (HttpRequestException)
         {

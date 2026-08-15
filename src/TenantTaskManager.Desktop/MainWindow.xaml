@@ -8,7 +8,8 @@
         MinHeight="420"
         WindowStartupLocation="CenterScreen">
     <Grid Background="#F5F7FA">
-        <Border Width="420"
+        <Border x:Name="LoginPanel"
+                Width="420"
                 Padding="32"
                 Background="White"
                 CornerRadius="8"
@@ -63,5 +64,80 @@
                         Click="LoginButton_Click" />
             </StackPanel>
         </Border>
+
+        <Grid x:Name="TaskPanel"
+              Margin="32"
+              Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Margin="0,0,0,20">
+                <TextBlock Text="Tasks"
+                           FontSize="28"
+                           FontWeight="SemiBold"
+                           Foreground="#172033" />
+                <TextBlock Margin="0,4,0,0"
+                           Text="Your tenant's task list"
+                           Foreground="#5B6475" />
+            </StackPanel>
+
+            <Grid Grid.Row="1">
+                <TextBlock x:Name="EmptyTasksMessage"
+                           Text="There are no tasks yet."
+                           Foreground="#5B6475"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Visibility="Collapsed" />
+
+                <ListBox x:Name="TaskList"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         HorizontalContentAlignment="Stretch">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Margin" Value="0,0,0,10" />
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Padding="16"
+                                    Background="White"
+                                    CornerRadius="6">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Title}"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="#172033"
+                                                   TextWrapping="Wrap" />
+                                        <TextBlock Margin="0,4,0,0"
+                                                   Text="{Binding CreatedDisplay}"
+                                                   FontSize="12"
+                                                   Foreground="#5B6475" />
+                                    </StackPanel>
+                                    <Border Grid.Column="1"
+                                            Margin="16,0,0,0"
+                                            Padding="10,4"
+                                            Background="#E7EEFC"
+                                            CornerRadius="12"
+                                            VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding Status}"
+                                                   FontSize="12"
+                                                   Foreground="#2457C5" />
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>
