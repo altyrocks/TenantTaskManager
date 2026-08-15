@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore .NET dependencies
+        run: dotnet restore TenantTaskManager.sln
+
+      - name: Build .NET solution
+        run: dotnet build TenantTaskManager.sln --configuration Release --no-restore
+
+      - name: Run .NET tests
+        run: dotnet test TenantTaskManager.sln --configuration Release --no-build
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: src/TenantTaskManager.Web/package-lock.json
+
+      - name: Install Angular dependencies
+        working-directory: src/TenantTaskManager.Web
+        run: npm ci
+
+      - name: Build Angular application
+        working-directory: src/TenantTaskManager.Web
+        run: npm run build
+
+      - name: Run Angular tests
+        working-directory: src/TenantTaskManager.Web
+        run: npm test -- --watch=false
