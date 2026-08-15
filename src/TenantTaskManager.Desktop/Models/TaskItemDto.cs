@@ -9,6 +9,11 @@ public sealed record TaskItemDto(
 {
     public string Status => IsCompleted ? "Complete" : "Open";
 
+    public bool CanComplete => !IsCompleted;
+
+    public string CompletionAction =>
+        IsCompleted ? "Completed" : "Mark complete";
+
     public string CreatedDisplay =>
         $"Created {CreatedAtUtc.LocalDateTime:g}";
 }

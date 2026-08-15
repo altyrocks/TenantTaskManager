@@ -81,6 +81,12 @@
                 <TextBlock Margin="0,4,0,0"
                            Text="Your tenant's task list"
                            Foreground="#5B6475" />
+                <TextBlock x:Name="TaskMessageTextBlock"
+                           Margin="0,8,0,0"
+                           Foreground="#17652F"
+                           TextWrapping="Wrap"
+                           Visibility="Collapsed"
+                           AutomationProperties.LiveSetting="Assertive" />
             </StackPanel>
 
             <Grid Grid.Row="1">
@@ -122,16 +128,26 @@
                                                    FontSize="12"
                                                    Foreground="#5B6475" />
                                     </StackPanel>
-                                    <Border Grid.Column="1"
-                                            Margin="16,0,0,0"
-                                            Padding="10,4"
-                                            Background="#E7EEFC"
-                                            CornerRadius="12"
-                                            VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding Status}"
-                                                   FontSize="12"
-                                                   Foreground="#2457C5" />
-                                    </Border>
+                                    <StackPanel Grid.Column="1"
+                                                Margin="16,0,0,0"
+                                                VerticalAlignment="Center">
+                                        <Border Padding="10,4"
+                                                Background="#E7EEFC"
+                                                CornerRadius="12"
+                                                HorizontalAlignment="Center">
+                                            <TextBlock Text="{Binding Status}"
+                                                       FontSize="12"
+                                                       Foreground="#2457C5" />
+                                        </Border>
+                                        <Button Margin="0,8,0,0"
+                                                Padding="10,5"
+                                                Background="#2457C5"
+                                                Foreground="White"
+                                                BorderThickness="0"
+                                                Content="{Binding CompletionAction}"
+                                                IsEnabled="{Binding CanComplete}"
+                                                Click="CompleteTaskButton_Click" />
+                                    </StackPanel>
                                 </Grid>
                             </Border>
                         </DataTemplate>

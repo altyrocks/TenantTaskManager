@@ -1,5 +1,7 @@
 using System.Windows;
 using System.Net.Http;
+using System.Windows.Controls;
+using TenantTaskManager.Desktop.Models;
 using TenantTaskManager.Desktop.Services;
 
 namespace TenantTaskManager.Desktop;
@@ -38,11 +40,7 @@ public partial class MainWindow : Window
                 return;
             }
 
-            var tasks = await apiClient.GetTasksAsync();
-            TaskList.ItemsSource = tasks;
-            EmptyTasksMessage.Visibility = tasks.Count == 0
-                ? Visibility.Visible
-                : Visibility.Collapsed;
+            await LoadTasksAsync();
 
             signedIn = true;
             LoginPanel.Visibility = Visibility.Collapsed;
@@ -63,6 +61,44 @@ public partial class MainWindow : Window
         }
     }
 
+    private async void CompleteTaskButton_Click(
+        object sender,
+        RoutedEventArgs e)
+    {
+        if (sender is not Button button
+            || button.DataContext is not TaskItemDto task
+            || !task.CanComplete)
+        {
+            return;
+        }
+
+        button.IsEnabled = false;
+        button.Content = "Completing...";
+        TaskMessageTextBlock.Visibility = Visibility.Collapsed;
+
+        try
+        {
+            await apiClient.CompleteTaskAsync(task.Id);
+            await LoadTasksAsync();
+            ShowTaskMessage($"Completed \"{task.Title}\".", isError: false);
+        }
+        catch (HttpRequestException)
+        {
+            button.IsEnabled = true;
+            button.Content = task.CompletionAction;
+            ShowTaskMessage("Unable to complete the task.", isError: true);
+        }
+    }
+
+    private async Task LoadTasksAsync()
+    {
+        var tasks = await apiClient.GetTasksAsync();
+        TaskList.ItemsSource = tasks;
+        EmptyTasksMessage.Visibility = tasks.Count == 0
+            ? Visibility.Visible
+            : Visibility.Collapsed;
+    }
+
     private void SetLoginInProgress(bool isInProgress)
     {
         LoginButton.IsEnabled = !isInProgress;
@@ -76,5 +112,14 @@ public partial class MainWindow : Window
             ? System.Windows.Media.Brushes.Firebrick
             : System.Windows.Media.Brushes.ForestGreen;
         MessageTextBlock.Visibility = Visibility.Visible;
+    }
+
+    private void ShowTaskMessage(string message, bool isError)
+    {
+        TaskMessageTextBlock.Text = message;
+        TaskMessageTextBlock.Foreground = isError
+            ? System.Windows.Media.Brushes.Firebrick
+            : System.Windows.Media.Brushes.ForestGreen;
+        TaskMessageTextBlock.Visibility = Visibility.Visible;
     }
 }

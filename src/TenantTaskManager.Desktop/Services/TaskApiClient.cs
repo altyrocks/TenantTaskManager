@@ -51,6 +51,18 @@ public sealed class TaskApiClient(HttpClient httpClient) : IDisposable
                 "The API returned an invalid task response.");
     }
 
+    public async Task CompleteTaskAsync(
+        Guid taskId,
+        CancellationToken cancellationToken = default)
+    {
+        using var response = await httpClient.PatchAsync(
+            $"api/tasks/{taskId}/complete",
+            content: null,
+            cancellationToken);
+
+        response.EnsureSuccessStatusCode();
+    }
+
     public void Dispose()
     {
         httpClient.Dispose();
