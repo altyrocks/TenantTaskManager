@@ -13,10 +13,12 @@ using TenantTaskManager.Infrastructure.Authentication;
 using TenantTaskManager.Application.Tasks.CompleteTask;
 using TenantTaskManager.Application.Authentication.Login;
 using TenantTaskManager.Application.Abstractions.Authentication;
+using TenantTaskManager.Api.ErrorHandling;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddExceptionHandler<ApiExceptionHandler>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ICurrentTenant, CurrentTenant>();
 builder.Services.AddScoped<LoginHandler>();
@@ -102,6 +104,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseExceptionHandler(_ => { });
 
 app.UseAuthentication();
 

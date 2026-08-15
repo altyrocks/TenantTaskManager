@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using TenantTaskManager.Application.Tasks;
 using TenantTaskManager.Api.Contracts.Tasks;
 using TenantTaskManager.Application.Tasks.GetTasks;
 using TenantTaskManager.Application.Tasks.CreateTask;
@@ -27,17 +26,10 @@ public sealed class TasksController(
         UpdateTaskRequest request,
         CancellationToken cancellationToken)
     {
-        try
-        {
-            await updateTaskHandler.HandleAsync(
-                new UpdateTaskCommand(id, request.Title),
-                cancellationToken);
-            return NoContent();
-        }
-        catch (TaskNotFoundException exception)
-        {
-            return TaskNotFound(exception);
-        }
+        await updateTaskHandler.HandleAsync(
+            new UpdateTaskCommand(id, request.Title),
+            cancellationToken);
+        return NoContent();
     }
 
     [HttpPatch("{id:guid}/complete")]
@@ -48,16 +40,9 @@ public sealed class TasksController(
         Guid id,
         CancellationToken cancellationToken)
     {
-        try
-        {
-            await completeTaskHandler.HandleAsync(id, cancellationToken);
+        await completeTaskHandler.HandleAsync(id, cancellationToken);
 
-            return NoContent();
-        }
-        catch (TaskNotFoundException exception)
-        {
-            return TaskNotFound(exception);
-        }
+        return NoContent();
     }
 
     [HttpGet]
@@ -85,15 +70,5 @@ public sealed class TasksController(
         return StatusCode(
             StatusCodes.Status201Created,
             new CreateTaskResponse(taskId));
-    }
-
-    private NotFoundObjectResult TaskNotFound(TaskNotFoundException exception)
-    {
-        return NotFound(new ProblemDetails
-        {
-            Status = StatusCodes.Status404NotFound,
-            Title = "Task not found",
-            Detail = exception.Message
-        });
     }
 }

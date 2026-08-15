@@ -17,22 +17,10 @@ public sealed class AuthenticationController(LoginHandler loginHandler) : Contro
         LoginRequest request,
         CancellationToken cancellationToken)
     {
-        try
-        {
-            var token = await loginHandler.HandleAsync(
-                new LoginCommand(request.Email, request.Password),
-                cancellationToken);
+        var token = await loginHandler.HandleAsync(
+            new LoginCommand(request.Email, request.Password),
+            cancellationToken);
 
-            return Ok(new LoginResponse(token.Value, token.ExpiresAtUtc));
-        }
-        catch (InvalidCredentialsException exception)
-        {
-            return Unauthorized(new ProblemDetails
-            {
-                Status = StatusCodes.Status401Unauthorized,
-                Title = "Invalid credentials",
-                Detail = exception.Message
-            });
-        }
+        return Ok(new LoginResponse(token.Value, token.ExpiresAtUtc));
     }
 }
