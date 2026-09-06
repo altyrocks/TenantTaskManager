@@ -50,6 +50,37 @@ public sealed class TaskItemTests
     }
 
     [Fact]
+    public void Constructor_WithMaximumLengthTitle_CreatesTask()
+    {
+        var title = new string('a', TaskItem.MaximumTitleLength);
+
+        var task = new TaskItem(Guid.NewGuid(), title);
+
+        Assert.Equal(title, task.Title);
+    }
+
+    [Fact]
+    public void Constructor_WithTitleOverMaximumLength_ThrowsArgumentException()
+    {
+        var title = new string('a', TaskItem.MaximumTitleLength + 1);
+
+        var exception = Assert.Throws<ArgumentException>(
+            () => new TaskItem(Guid.NewGuid(), title));
+
+        Assert.Equal("title", exception.ParamName);
+    }
+
+    [Fact]
+    public void Constructor_TrimsTitleBeforeCheckingMaximumLength()
+    {
+        var title = $"  {new string('a', TaskItem.MaximumTitleLength)}  ";
+
+        var task = new TaskItem(Guid.NewGuid(), title);
+
+        Assert.Equal(TaskItem.MaximumTitleLength, task.Title.Length);
+    }
+
+    [Fact]
     public void Complete_WhenIncomplete_MarksTaskComplete()
     {
         var task = new TaskItem(Guid.NewGuid(), "Prepare report");
@@ -93,6 +124,19 @@ public sealed class TaskItemTests
     public void UpdateTitle_WithBlankTitle_ThrowsArgumentException(string title)
     {
         var task = new TaskItem(Guid.NewGuid(), "Original title");
+
+        var exception = Assert.Throws<ArgumentException>(
+            () => task.UpdateTitle(title));
+
+        Assert.Equal("title", exception.ParamName);
+        Assert.Equal("Original title", task.Title);
+    }
+
+    [Fact]
+    public void UpdateTitle_WithTitleOverMaximumLength_ThrowsAndPreservesTitle()
+    {
+        var task = new TaskItem(Guid.NewGuid(), "Original title");
+        var title = new string('a', TaskItem.MaximumTitleLength + 1);
 
         var exception = Assert.Throws<ArgumentException>(
             () => task.UpdateTitle(title));

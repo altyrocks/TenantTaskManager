@@ -2,6 +2,8 @@ namespace TenantTaskManager.Domain.Entities;
 
 public sealed class TaskItem
 {
+    public const int MaximumTitleLength = 200;
+
     private TaskItem()
     {
     }
@@ -13,14 +15,9 @@ public sealed class TaskItem
             throw new ArgumentException("A tenant ID is required.", nameof(tenantId));
         }
 
-        if (string.IsNullOrWhiteSpace(title))
-        {
-            throw new ArgumentException("A task title is required.", nameof(title));
-        }
-
         Id = Guid.NewGuid();
         TenantId = tenantId;
-        Title = title.Trim();
+        Title = ValidateAndNormalizeTitle(title);
         CreatedAtUtc = DateTimeOffset.UtcNow;
     }
 
@@ -49,11 +46,25 @@ public sealed class TaskItem
 
     public void UpdateTitle(string title)
     {
+        Title = ValidateAndNormalizeTitle(title);
+    }
+
+    private static string ValidateAndNormalizeTitle(string title)
+    {
         if (string.IsNullOrWhiteSpace(title))
         {
             throw new ArgumentException("A task title is required.", nameof(title));
         }
 
-        Title = title.Trim();
+        var normalizedTitle = title.Trim();
+
+        if (normalizedTitle.Length > MaximumTitleLength)
+        {
+            throw new ArgumentException(
+                $"A task title cannot exceed {MaximumTitleLength} characters.",
+                nameof(title));
+        }
+
+        return normalizedTitle;
     }
 }
